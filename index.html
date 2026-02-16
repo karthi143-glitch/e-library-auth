@@ -1,38 +1,98 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>E-Library</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Simple E-Library</title>
+    <style>
+        body {
+            font-family: Arial;
+            text-align: center;
+            background-color: #f4f4f4;
+        }
+
+        input {
+            padding: 8px;
+            margin: 5px;
+        }
+
+        button {
+            padding: 8px 15px;
+            background-color: green;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: darkgreen;
+        }
+
+        .book {
+            background: white;
+            padding: 10px;
+            margin: 10px auto;
+            width: 300px;
+            border-radius: 5px;
+        }
+    </style>
 </head>
 <body>
 
-    <h1>📚 E-Library</h1>
+<h1>📚 My E-Library</h1>
 
-    <!-- Login / Signup Section -->
-    <div id="authSection">
-        <h2>Login</h2>
-        <input type="email" id="loginEmail" placeholder="Email">
-        <input type="password" id="loginPassword" placeholder="Password">
-        <button onclick="login()">Login</button>
+<input type="text" id="title" placeholder="Book Title">
+<input type="text" id="author" placeholder="Author Name">
+<button onclick="addBook()">Add Book</button>
 
-        <h3>Don't have account?</h3>
-        <input type="email" id="signupEmail" placeholder="Email">
-        <input type="password" id="signupPassword" placeholder="Password">
-        <button onclick="signup()">Signup</button>
-    </div>
+<div id="bookList"></div>
 
-    <!-- Library Section -->
-    <div id="librarySection" style="display:none;">
-        <button onclick="logout()">Logout</button>
+<script>
+function addBook() {
+    let title = document.getElementById("title").value;
+    let author = document.getElementById("author").value;
 
-        <h2>Add Book</h2>
-        <input type="text" id="title" placeholder="Book Title">
-        <input type="text" id="author" placeholder="Author">
-        <button onclick="addBook()">Add Book</button>
+    if (!title || !author) {
+        alert("Please enter all fields!");
+        return;
+    }
 
-        <div id="bookList"></div>
-    </div>
+    let books = JSON.parse(localStorage.getItem("books")) || [];
 
-    <script src="script.js"></script>
+    books.push({ title, author });
+
+    localStorage.setItem("books", JSON.stringify(books));
+
+    document.getElementById("title").value = "";
+    document.getElementById("author").value = "";
+
+    displayBooks();
+}
+
+function displayBooks() {
+    let bookList = document.getElementById("bookList");
+    bookList.innerHTML = "";
+
+    let books = JSON.parse(localStorage.getItem("books")) || [];
+
+    books.forEach((book, index) => {
+        bookList.innerHTML += `
+            <div class="book">
+                <h3>${book.title}</h3>
+                <p>Author: ${book.author}</p>
+                <button onclick="deleteBook(${index})">Delete</button>
+            </div>
+        `;
+    });
+}
+
+function deleteBook(index) {
+    let books = JSON.parse(localStorage.getItem("books")) || [];
+    books.splice(index, 1);
+    localStorage.setItem("books", JSON.stringify(books));
+    displayBooks();
+}
+
+displayBooks();
+</script>
+
 </body>
 </html>
